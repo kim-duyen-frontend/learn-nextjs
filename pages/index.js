@@ -1,20 +1,18 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import styles from '../styles/Home.module.scss'
 import Link from 'next/link';
 import axios from 'axios';
 
-function Home() {
-  const [listPokemon, setListPokemon] = useState([]);
-
-  useEffect(() => {
-    async function getAllPokemon() {
-      const response = await axios.get("https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json");
-      setListPokemon(response?.data)
+export async function getServerSideProps() {
+  const response = await axios.get("https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json");
+  return {
+    props: {
+      listPokemon: response?.data
     }
-    getAllPokemon();
-  }, [])
+  }
+}
+function Home({listPokemon}) {
   return (
     <>
       <Head>

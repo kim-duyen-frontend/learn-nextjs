@@ -1,27 +1,20 @@
 import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from "../../styles/Detail.module.scss";
 
-function DetailPokemon() {
-    const { query: { id } } = useRouter();
-    const [pokemon, setPokemon] = useState(null);
+export async function getServerSideProps({ params }) {
+    const response = await axios.get(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`);
+    return {
+        props: {
+            pokemon: response?.data
+        }
+    }
+}
+function DetailPokemon({ pokemon }) {
     const router = useRouter()
 
-    useEffect(() => {
-        async function getPokemonById() {
-            const response = await axios.get(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`);
-            console.log(response?.data);
-            setPokemon(response?.data);
-        }
-        if (id) {
-            getPokemonById();
-        }
-    }, [id])
-    if (!pokemon) {
-        return null;
-    }
     return (
         <div className={styles.detail}>
             <div className="container">
