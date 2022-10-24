@@ -4,7 +4,18 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import styles from "../../styles/Detail.module.scss";
 
-export async function getServerSideProps({ params }) {
+export async function getStaticPaths() {
+    const response = await axios.get("https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json");
+    const data = response?.data;
+    return {
+        paths: data.map((pokemon) => ({
+            params: { id: pokemon.id.toString() }
+        })),
+        fallback: false
+    }
+}
+
+export async function getStaticProps({ params }) {
     const response = await axios.get(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`);
     return {
         props: {
